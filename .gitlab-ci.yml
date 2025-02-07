@@ -1,0 +1,39 @@
+# Define global variables for the pipeline
+variables:
+  NODE_ENV: development
+  FRONTEND_IMAGE: node:18  
+  BACKEND_IMAGE: maven:3.8-openjdk-17 
+
+stages:
+  - build
+  - test
+
+# Job to build the hrm-ui (React + Vite)
+build-frontend:
+  stage: build
+  image: $FRONTEND_IMAGE
+  script:
+    - echo "Building the hrm-ui frontend..."
+    - cd hrm-ui
+    - npm install
+    - npm run build
+
+
+# Job to build the hrm-services (Spring Boot)
+build-backend:
+  stage: build
+  image: $BACKEND_IMAGE
+  script:
+    - echo "Building the hrm-services backend with Maven..."
+    - cd hrm-services
+    - mvn clean package
+
+
+# Job to run tests for the hrm-services
+test-backend:
+  stage: test
+  image: $BACKEND_IMAGE
+  script:
+    - echo "Running tests for the hrm-services backend with Maven..."
+    - cd hrm-services
+    - mvn test
